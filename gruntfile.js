@@ -190,9 +190,8 @@ module.exports = function(grunt) {
 		jasmine: {
 			pivotal: {
 				// Add scripts you would like to test here
-				src: [
-					'dist/js/**/*'
-				],
+				src: appFiles,
+
 				// Spec tests should be same file name as scripts + 'Spec'
 				options: {
 					specs: 'app/spec/*Spec.js',
@@ -229,8 +228,8 @@ module.exports = function(grunt) {
 		'sass:dev',
 		'uglify:dev',
 		'uglify:libs', 
-		'copy'/*,
-		'jasmine'*/
+		'copy',
+		'jasmine'
 	]);
 
 	// Deploy task

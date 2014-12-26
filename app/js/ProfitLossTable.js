@@ -16,7 +16,12 @@
 		 */
 		init: function(url, test_callbacks){
 
-			this.$el = document.getElementsByClassName('profit-loss')[0];
+			if(test_callbacks){
+				// Turn DOM manipulation functionality off
+				this.testMode = true;
+			}else{
+				this.$el = document.getElementsByClassName('profit-loss')[0];
+			}
 
 			this.retrieveData(url, test_callbacks);
 		},
@@ -33,21 +38,25 @@
 			var xmlHttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP"),
 				self = this;
 
+			xmlHttp.url = url;
+			xmlHttp.method = "GET";
 			xmlHttp.onreadystatechange = ProcessRequest;
-			xmlHttp.open("GET", url, true);
+			xmlHttp.open(xmlHttp.method, xmlHttp.url, true);
 			xmlHttp.send(null);
 
 			function ProcessRequest() {
 
 				if (xmlHttp.readyState !== 4 || xmlHttp.status !== 200) return;
 
-				if(test_callbacks) test_callbacks.onsuccess();
+				if (test_callbacks) test_callbacks.onSuccess();
 
 				self.data = JSON.parse(xmlHttp.responseText);
 
 				self.generateRows();
 
 			}
+
+			return xmlHttp;
 		},
 
 		// Generate rows of data corresponding to stocks purchased
@@ -55,41 +64,55 @@
 
 			if (!this.data && this.data.picks && this.$el) return;
 
-			var $tableBody = this.$el.getElementsByClassName('profit-loss--body')[0],
-				tr = document.createElement('tr'),
-				total = 0,
+			if(!this.testMode){
+				var $tbody = this.$el.getElementsByClassName('profit-loss--body')[0],
+					$tr = document.createElement('tr');
+
+				// Hide preloader
+				$tbody.parentNode.className += ' profit-loss--loaded';
+			}
+
+			var total = 0,
 				self = this;
 
-			// Hide preloader
-			$tableBody.parentNode.className += ' profit-loss--loaded';
-
 			// Add rows
-			this.data.picks.forEach(function(row, index){
+			this.data.picks.forEach(function(stock_pick, index){
 
-				var table_row = tr.cloneNode(true),
-					ticker_profit_loss = self.calcProfitLoss(row.open_level, row.level, row.qty);
+				var ticker_profit_loss = self.calcProfitLoss(stock_pick.open_level, stock_pick.level, stock_pick.qty);
 
-				// Odd row class
-				if(index % 2 === 0) table_row.className = 'odd';
-
-				// Table row for ticker
-				table_row.innerHTML = 
-					'<td title="'+row.name+'">'+row.ticker+'</td>' +
-					'<td title="'+self.findMarket(row.exchange)+'">'+row.exchange+'</td>' +
-					'<td>'+self.data.account.currency + self.calcBookCost(row.open_level, row.qty)+'</td>' +
-					'<td>'+row.open_level+'</td>' +
-					'<td>'+row.level+'</td>' +
-					'<td>'+row.qty+'</td>' +
-					'<td>'+self.data.account.currency + ticker_profit_loss+'</td>';
-
-				$tableBody.appendChild(table_row);
+				if(!self.testMode){
+					self.appendStockRow($tr, $tbody, index, stock_pick, ticker_profit_loss);
+				}
 
 				// Add profit loss to total
 				total = self.calcTotalProfitLoss(total, ticker_profit_loss);
 
 			});
 
-			this.showTotal(total);
+			if(!this.testMode){
+				this.showTotal(total);
+			}
+		},
+
+		appendStockRow: function appendRow($tr, $tbody, index, stock_pick, ticker_profit_loss){
+
+			var $table_row = $tr.cloneNode(true);
+
+			// Odd row class
+			if(index % 2 === 0) $table_row.className = 'odd';
+
+			// Table row for ticker
+			$table_row.innerHTML = 
+				'<td title="'+stock_pick.name+'">'+stock_pick.ticker+'</td>' +
+				'<td title="'+this.findMarket(stock_pick.exchange)+'">'+stock_pick.exchange+'</td>' +
+				'<td>'+this.data.account.currency + this.calcBookCost(stock_pick.open_level, stock_pick.qty)+'</td>' +
+				'<td>'+stock_pick.open_level+'</td>' +
+				'<td>'+stock_pick.level+'</td>' +
+				'<td>'+stock_pick.qty+'</td>' +
+				'<td>'+this.data.account.currency + ticker_profit_loss+'</td>';
+
+			$tbody.appendChild($table_row);
+
 		},
 
 		/*
@@ -153,4 +176,4 @@
 		
 	};
 
-}(window.IG || {}));
+}(window.IG));
