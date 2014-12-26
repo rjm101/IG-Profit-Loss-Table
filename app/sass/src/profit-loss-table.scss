@@ -1,0 +1,71 @@
+.profit-loss{
+	width: 800px;
+	margin: auto;
+	font-family: 'Helvetica Neue', Arial, sans-serif;
+	font-size: 0.9em;
+	background-color: white;
+	box-shadow: 0 0 5px rgba(0,0,0,0.2);
+	min-height: 150px;
+
+	thead{
+		font-weight: bold;
+		background-color: rgb(92, 92, 92);
+		color: white;
+	}
+
+	tr{
+		height: 35px;
+		padding: 10px;
+
+		td{
+			border: 1px solid grey;
+			padding: 0 10px;
+			text-align: center;
+		}
+	}
+
+	tfoot{
+		display: none;
+
+		td{
+			text-align: right;
+		}
+	}
+
+	.profit-loss--body{
+		tr{
+			&.profit-loss--spinner{
+				height: 170px;
+			}
+
+			&.odd{
+				background-color: #F7F7F7;
+			}
+		}
+	}
+
+	&.profit-loss--loaded{
+
+		.profit-loss--spinner{
+			display: none;
+		}
+
+		.profit-loss--body{
+			tr{
+				&:hover{
+					background-color: rgb(232, 0, 0);
+
+					td{
+						border-color: rgb(255, 154, 154);
+						color: white;
+						font-weight: bold;
+					}
+				}
+			}
+		}
+
+		tfoot{
+			display: table-row-group;
+		}
+	}
+}
