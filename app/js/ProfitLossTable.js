@@ -16,12 +16,7 @@
 		 */
 		init: function(url, test_callbacks){
 
-			if(test_callbacks){
-				// Turn DOM manipulation functionality off
-				this.testMode = true;
-			}else{
-				this.$el = document.getElementsByClassName('profit-loss')[0];
-			}
+			this.$el = document.getElementsByClassName('profit-loss')[0];
 
 			this.retrieveData(url, test_callbacks);
 		},
@@ -64,34 +59,27 @@
 
 			if (!this.data && this.data.picks && this.$el) return;
 
-			if(!this.testMode){
-				var $tbody = this.$el.getElementsByClassName('profit-loss--body')[0],
-					$tr = document.createElement('tr');
-
-				// Hide preloader
-				$tbody.parentNode.className += ' profit-loss--loaded';
-			}
-
-			var total = 0,
+			var $tbody = this.$el.getElementsByClassName('profit-loss--body')[0],
+				$tr = document.createElement('tr'),
+				total = 0,
 				self = this;
+
+			// Hide preloader
+			$tbody.parentNode.className += ' profit-loss--loaded';
 
 			// Add rows
 			this.data.picks.forEach(function(stock_pick, index){
 
 				var ticker_profit_loss = self.calcProfitLoss(stock_pick.open_level, stock_pick.level, stock_pick.qty);
 
-				if(!self.testMode){
-					self.appendStockRow($tr, $tbody, index, stock_pick, ticker_profit_loss);
-				}
+				self.appendStockRow($tr, $tbody, index, stock_pick, ticker_profit_loss);
 
 				// Add profit loss to total
 				total = self.calcTotalProfitLoss(total, ticker_profit_loss);
 
 			});
 
-			if(!this.testMode){
-				this.showTotal(total);
-			}
+			this.showTotal(total);
 		},
 
 		appendStockRow: function appendRow($tr, $tbody, index, stock_pick, ticker_profit_loss){
@@ -100,6 +88,8 @@
 
 			// Odd row class
 			if(index % 2 === 0) $table_row.className = 'odd';
+
+			$table_row.className += ' profit-loss--stock_row';
 
 			// Table row for ticker
 			$table_row.innerHTML = 

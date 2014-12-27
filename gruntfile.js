@@ -66,6 +66,12 @@ module.exports = function(grunt) {
 					'app/img/**/*'
 				],
 				tasks: ['copy:assets']
+			},
+			specs: {
+				files: [
+					'app/spec/**/*'
+				],
+				tasks: ['jasmine']
 			}
 		},
 
@@ -188,7 +194,7 @@ module.exports = function(grunt) {
 
 		// Testing
 		jasmine: {
-			pivotal: {
+			app: {
 				// Add scripts you would like to test here
 				src: appFiles,
 
@@ -240,8 +246,8 @@ module.exports = function(grunt) {
 		'uglify:deploy', 
 		'uglify:libs', 
 		'sass:deploy', 
-		'copy'/*,
-		'jasmine'*/
+		'copy',
+		'jasmine'
 	]);
 
 	// Run localhost on http://localhost:9000/, perform dev build and watch for file changes
