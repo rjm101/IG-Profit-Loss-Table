@@ -25,13 +25,16 @@
     "grunt-newer": "~0.7.0"
   },
   "appFiles": [
-    "app/js/main.js",
-    "app/js/ProfitLossTable.js"
+    "app/js/ProfitLossTable.js",
+    "app/js/main.js"
   ],
   "libFiles": [
     "app/libs/ftlabs.fastclick.js",
     "app/libs/html5shiv.js",
-    "app/libs/jquery-1.10.1.min.js",
-    "app/libs/respond-1.1.0.min.js"
+    "app/libs/respond-1.1.0.min.js",
+    "app/libs/polyfills/foreach-polyfill.js",
+    "app/libs/polyfills/json3.min.js",
+    "app/libs/polyfills/classname-polyfill.js",
+    "app/libs/polyfills/reduce-polyfill.js"
   ]
 }

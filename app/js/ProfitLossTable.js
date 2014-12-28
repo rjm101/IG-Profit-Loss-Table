@@ -16,7 +16,7 @@
 		 */
 		init: function(url, test_callbacks){
 
-			this.$el = document.getElementsByClassName('profit-loss')[0];
+			this.$el = document.getElementById('profit-loss');
 
 			this.retrieveData(url, test_callbacks);
 		},
@@ -59,8 +59,7 @@
 
 			if (!this.data && this.data.picks && this.$el) return;
 
-			var $tbody = this.$el.getElementsByClassName('profit-loss--body')[0],
-				$tr = document.createElement('tr'),
+			var $tbody = document.getElementsByClassName('profit-loss--body', 'tbody', this.$el)[0],
 				total = 0,
 				self = this;
 
@@ -72,7 +71,17 @@
 
 				var ticker_profit_loss = self.calcProfitLoss(stock_pick.open_level, stock_pick.level, stock_pick.qty);
 
-				self.appendStockRow($tr, $tbody, index, stock_pick, ticker_profit_loss);
+				var columns = [
+					{title: stock_pick.name, content: stock_pick.ticker},
+					{title: self.findMarket(stock_pick.exchange), content: stock_pick.ticker},
+					{content: self.data.account.currency + self.calcBookCost(stock_pick.open_level, stock_pick.qty)},
+					{content: stock_pick.open_level},
+					{content: stock_pick.level},
+					{content: stock_pick.qty},
+					{content: self.data.account.currency + ticker_profit_loss}
+				];
+
+				self.appendStockRow($tbody, index, columns);
 
 				// Add profit loss to total
 				total = self.calcTotalProfitLoss(total, ticker_profit_loss);
@@ -82,26 +91,33 @@
 			this.showTotal(total);
 		},
 
-		appendStockRow: function appendRow($tr, $tbody, index, stock_pick, ticker_profit_loss){
+		/*
+		 * Add cells and append row to stock table
+		 * @param {Object} $tbody to append to
+		 * @param {Int} index row
+		 * @param {Array} columns for indvidual cell contents
+		 */
+		appendStockRow: function appendRow($tbody, index, columns){
 
-			var $table_row = $tr.cloneNode(true);
+			var $table_row = $tbody.insertRow();
 
 			// Odd row class
 			if(index % 2 === 0) $table_row.className = 'odd';
 
 			$table_row.className += ' profit-loss--stock_row';
 
-			// Table row for ticker
-			$table_row.innerHTML = 
-				'<td title="'+stock_pick.name+'">'+stock_pick.ticker+'</td>' +
-				'<td title="'+this.findMarket(stock_pick.exchange)+'">'+stock_pick.exchange+'</td>' +
-				'<td>'+this.data.account.currency + this.calcBookCost(stock_pick.open_level, stock_pick.qty)+'</td>' +
-				'<td>'+stock_pick.open_level+'</td>' +
-				'<td>'+stock_pick.level+'</td>' +
-				'<td>'+stock_pick.qty+'</td>' +
-				'<td>'+this.data.account.currency + ticker_profit_loss+'</td>';
+			// Append cell (innerHTML not supported in <= IE9)
+			columns.forEach(function(cell){
 
-			$tbody.appendChild($table_row);
+				var $tcell = $table_row.insertCell();
+				
+				if(cell.title) $tcell.title = cell.title;
+				
+				$tcell.innerHTML = cell.content;
+
+				$table_row.appendChild($tcell);
+
+			});
 
 		},
 
@@ -159,8 +175,7 @@
 		// Add total to html
 		showTotal: function generateTotal(total){
 
-			this.$el
-				.getElementsByClassName('profit-loss--total')[0]
+			document.getElementsByClassName('profit-loss--total', 'span', this.$el)[0]
 				.innerHTML = this.data.account.currency + total;	
 		}
 		

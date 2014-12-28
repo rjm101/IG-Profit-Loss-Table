@@ -1,4 +1,4 @@
-.profit-loss{
+#profit-loss{
 	width: 800px;
 	margin: auto;
 	font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -25,7 +25,7 @@
 	}
 
 	tfoot{
-		display: none;
+		visibility: hidden;
 
 		td{
 			text-align: right;
@@ -65,7 +65,7 @@
 		}
 
 		tfoot{
-			display: table-row-group;
+			visibility: visible;
 		}
 	}
 }

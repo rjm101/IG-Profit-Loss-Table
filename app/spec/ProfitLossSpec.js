@@ -85,7 +85,7 @@ describe("Profit Loss Spec", function() {
 	afterEach(function() {
 
 		// Remove template
-		var $profitLossTmpl = document.getElementsByClassName('profit-loss')[0];
+		var $profitLossTmpl = document.getElementById('profit-loss');
 
 		if($profitLossTmpl){
 			$profitLossTmpl.parentNode.removeChild($profitLossTmpl);
